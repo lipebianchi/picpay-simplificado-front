@@ -1,0 +1,275 @@
+<div class="home-container">
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="hero-content">
+      <h1 class="hero-title">PicPay</h1>
+      <p class="hero-subtitle">Sistema de Carteiras Digitais</p>
+      <p class="hero-description">Gerencie suas carteiras e realize transferências de forma simples e segura</p>
+    </div>
+  </section>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <!-- Forms Section -->
+    <section class="forms-section">
+      <div class="forms-grid">
+        <!-- Create Wallet Card -->
+        <div class="form-card">
+          <div class="card-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"></path>
+              <path d="M3 5v14a2 2 0 0 0 2 2h16v-5"></path>
+              <path d="M18 12a2 2 0 0 0 0 4h4v-4Z"></path>
+            </svg>
+          </div>
+          <h2 class="card-title">Nova Carteira</h2>
+          <p class="card-description">Crie uma nova carteira digital</p>
+          
+          <form [formGroup]="walletForm" (ngSubmit)="onCreateWallet()" class="modern-form">
+            <div class="form-group">
+              <label for="fullName" class="form-label">Nome Completo</label>
+              <input 
+                type="text" 
+                id="fullName" 
+                formControlName="fullName" 
+                class="form-input"
+                placeholder="Digite seu nome completo"
+                required>
+            </div>
+
+            <div class="form-group">
+              <label for="cpf" class="form-label">CPF</label>
+              <input 
+                type="text" 
+                id="cpf" 
+                formControlName="cpf" 
+                class="form-input"
+                placeholder="000.000.000-00"
+                required>
+            </div>
+
+            <div class="form-group">
+              <label for="email" class="form-label">Email</label>
+              <input 
+                type="email" 
+                id="email" 
+                formControlName="email" 
+                class="form-input"
+                placeholder="seu@email.com"
+                required>
+            </div>
+
+            <div class="form-group">
+              <label for="password" class="form-label">Senha</label>
+              <input 
+                type="password" 
+                id="password" 
+                formControlName="password" 
+                class="form-input"
+                placeholder="••••••••"
+                required>
+            </div>
+
+            <div class="form-group">
+              <label for="type" class="form-label">Tipo de Usuário</label>
+              <select id="type" formControlName="type" class="form-select" required>
+                <option value="0">Lojista</option>
+                <option value="1">Usuário</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="initialBalance" class="form-label">Saldo Inicial</label>
+              <input 
+                type="number" 
+                id="initialBalance" 
+                formControlName="initialBalance" 
+                class="form-input"
+                step="0.01" 
+                min="0"
+                placeholder="0.00"
+                required>
+            </div>
+
+            <button 
+              type="submit" 
+              class="btn-primary"
+              [disabled]="walletForm.invalid || loading">
+              <span *ngIf="!loading">Criar Carteira</span>
+              <span *ngIf="loading" class="btn-loading">
+                <span class="spinner"></span>
+                Criando...
+              </span>
+            </button>
+          </form>
+        </div>
+
+        <!-- Transfer Card -->
+        <div class="form-card">
+          <div class="card-icon transfer-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
+            </svg>
+          </div>
+          <h2 class="card-title">Transferência</h2>
+          <p class="card-description">Realize transferências entre carteiras</p>
+          
+          <form [formGroup]="transferForm" (ngSubmit)="onTransfer()" class="modern-form">
+            <div class="form-group">
+              <label for="payerId" class="form-label">ID do Pagador</label>
+              <input 
+                type="text" 
+                id="payerId" 
+                formControlName="payerId" 
+                class="form-input"
+                placeholder="00000000-0000-0000-0000-000000000000"
+                required>
+            </div>
+
+            <div class="form-group">
+              <label for="payeeId" class="form-label">ID do Beneficiário</label>
+              <input 
+                type="text" 
+                id="payeeId" 
+                formControlName="payeeId" 
+                class="form-input"
+                placeholder="00000000-0000-0000-0000-000000000000"
+                required>
+            </div>
+
+            <div class="form-group">
+              <label for="value" class="form-label">Valor</label>
+              <input 
+                type="number" 
+                id="value" 
+                formControlName="value" 
+                class="form-input"
+                step="0.01" 
+                min="0.01"
+                placeholder="0.00"
+                required>
+            </div>
+
+            <button 
+              type="submit" 
+              class="btn-primary btn-transfer"
+              [disabled]="transferForm.invalid || loading">
+              <span *ngIf="!loading">Transferir</span>
+              <span *ngIf="loading" class="btn-loading">
+                <span class="spinner"></span>
+                Transferindo...
+              </span>
+            </button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- Wallets Table Section -->
+    <section class="table-section">
+      <div class="table-header">
+        <div>
+          <h2 class="section-title">Carteiras Cadastradas</h2>
+          <p class="section-subtitle">{{ wallets.length }} carteira{{ wallets.length !== 1 ? 's' : '' }} encontrada{{ wallets.length !== 1 ? 's' : '' }}</p>
+        </div>
+        <button class="btn-refresh" (click)="loadWallets()" [disabled]="loading" title="Atualizar lista">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"></path>
+          </svg>
+        </button>
+      </div>
+
+      <div class="table-container">
+        <!-- Loading State -->
+        <div *ngIf="loading" class="loading-state">
+          <div class="loading-spinner"></div>
+          <p>Carregando carteiras...</p>
+        </div>
+
+        <!-- Empty State -->
+        <div *ngIf="!loading && wallets.length === 0" class="empty-state">
+          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"></path>
+            <path d="M3 5v14a2 2 0 0 0 2 2h16v-5"></path>
+            <path d="M18 12a2 2 0 0 0 0 4h4v-4Z"></path>
+          </svg>
+          <h3>Nenhuma carteira encontrada</h3>
+          <p>Crie sua primeira carteira usando o formulário acima</p>
+        </div>
+
+        <!-- Table -->
+        <div *ngIf="!loading && wallets.length > 0" class="modern-table-wrapper">
+          <table class="modern-table">
+            <thead>
+              <tr>
+                <th>Nome</th>
+                <th>CPF</th>
+                <th>Email</th>
+                <th>Tipo</th>
+                <th>Saldo</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let wallet of wallets" class="table-row">
+                <td class="wallet-name">
+                  <div class="wallet-avatar">{{ wallet.fullName.charAt(0).toUpperCase() }}</div>
+                  <span>{{ wallet.fullName }}</span>
+                </td>
+                <td>{{ wallet.cpf }}</td>
+                <td>{{ wallet.email }}</td>
+                <td>
+                  <span class="type-badge" [ngClass]="isLojista(wallet.type) ? 'badge-shopkeeper' : 'badge-user'">
+                    {{ isLojista(wallet.type) ? 'Lojista' : 'Usuário' }}
+                  </span>
+                </td>
+                <td class="wallet-balance">
+                  <span class="balance-value">R$ {{ wallet.balance | number:'1.2-2' }}</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Toast Notifications -->
+  <div class="toast-container">
+    <div *ngIf="successMessage" class="toast toast-success">
+      <div class="toast-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+          <polyline points="22 4 12 14.01 9 11.01"></polyline>
+        </svg>
+      </div>
+      <div class="toast-content">
+        <p class="toast-message">{{ successMessage }}</p>
+      </div>
+      <button class="toast-close" (click)="successMessage = ''" aria-label="Fechar">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+
+    <div *ngIf="errorMessage" class="toast toast-error">
+      <div class="toast-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+      </div>
+      <div class="toast-content">
+        <p class="toast-message">{{ errorMessage }}</p>
+      </div>
+      <button class="toast-close" (click)="errorMessage = ''" aria-label="Fechar">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+  </div>
+</div>

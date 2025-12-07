@@ -46,8 +46,8 @@
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "4kB",
-                  "maximumError": "8kB"
+                  "maximumWarning": "15kB",
+                  "maximumError": "20kB"
                 }
               ],
               "outputHashing": "all"
@@ -67,7 +67,8 @@
               "buildTarget": "PicPayAngular:build:production"
             },
             "development": {
-              "buildTarget": "PicPayAngular:build:development"
+              "buildTarget": "PicPayAngular:build:development",
+              "proxyConfig": "proxy.conf.json"
             }
           },
           "defaultConfiguration": "development"
@@ -98,5 +99,8 @@
         }
       }
     }
+  },
+  "cli": {
+    "analytics": "1b48867f-4b02-4667-9d5b-5d04c76a1f87"
   }
 }

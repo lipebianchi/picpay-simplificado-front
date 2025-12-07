@@ -1,1 +1,13 @@
 /* You can add global styles to this file, and also import other style files */
+@import 'bootstrap/dist/css/bootstrap.min.css';
+
+/* Dark Mode Global Styles */
+html[data-theme="dark"] {
+  background-color: #0F172A;
+  color: #F8FAFC;
+}
+
+html[data-theme="dark"] body {
+  background-color: #0F172A;
+  color: #F8FAFC;
+}
